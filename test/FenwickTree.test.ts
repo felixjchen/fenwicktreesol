@@ -56,6 +56,14 @@ describe("FenwickTreeContract", function () {
   const fenwickTree = new FenwickTreeTS.FenwickTree(A);
 
   let fenwickTreeContract: FenwickTree;
+  const getFenwickTreeContractPrefixSum = async () => {
+    const prefixSum = [];
+    for (const i of range(0, A.length)) {
+      prefixSum.push((await fenwickTreeContract.query(i + 1)).toNumber());
+    }
+    return prefixSum;
+  };
+
   this.beforeEach(async () => {
     const FenwickTreeFactory = await ethers.getContractFactory("FenwickTree");
     fenwickTreeContract = await FenwickTreeFactory.deploy(fenwickTree.fenwick);
@@ -67,13 +75,9 @@ describe("FenwickTreeContract", function () {
   });
 
   it("Should match a naive prefix sum on A", async () => {
-    const fenwickPrefixSum = [];
-    for (const i of range(1, 6)) {
-      const prefixSumI = await fenwickTreeContract.query(i);
-      fenwickPrefixSum.push(prefixSumI.toNumber());
-    }
+    const contractPrefixSum = await getFenwickTreeContractPrefixSum();
     const prefixSum = getPrefixSum(A);
-    expect(fenwickPrefixSum).to.eql(prefixSum);
+    expect(contractPrefixSum).to.eql(prefixSum);
   });
 
   it("Should let me update any index", async () => {
@@ -82,13 +86,8 @@ describe("FenwickTreeContract", function () {
     B[1] += 3;
     await fenwickTreeContract.update(1 + 1, 3); // update is 1-indexed
 
-    // Check match
-    const fenwickPrefixSum = [];
-    for (const i of range(1, 6)) {
-      const prefixSumI = await fenwickTreeContract.query(i);
-      fenwickPrefixSum.push(prefixSumI.toNumber());
-    }
+    const contractPrefixSum = await getFenwickTreeContractPrefixSum();
     const prefixSum = getPrefixSum(B);
-    expect(fenwickPrefixSum).to.eql(prefixSum);
+    expect(contractPrefixSum).to.eql(prefixSum);
   });
 });
