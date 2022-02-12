@@ -1,3 +1,14 @@
-### Fenwick Tree for Prefix Sum
+### Description
 
-Fenwick Tree with log(n) update and query to implement a prefix sum. [Article](https://medium.com/carpanese/a-visual-introduction-to-fenwick-tree-89b82cac5b3c)
+Fenwick Tree in Solidity with log(n) update and query to calculate prefix sums.
+
+Supported by TypeScript package [feenwicktreejs](https://www.npmjs.com/package/fenwicktreejs)
+
+### Note
+
+- query(i) is 1-indexed
+- update(i, diff) is 1-indexed
+
+### Sources
+
+- [Igor Carpanese](https://medium.com/carpanese/a-visual-introduction-to-fenwick-tree-89b82cac5b3c)

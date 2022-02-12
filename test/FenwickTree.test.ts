@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
-import type { FenwickTree } from "../typechain";
-import * as FenwickTreeTS from "./FenwickTree";
+import * as fenwicktreejs from "fenwicktreejs";
+import { FenwickTree } from "../typechain";
 
 const range = (start: number, end: number) => {
   const length = end - start;
@@ -22,10 +22,10 @@ const getPrefixSum = (A: number[]) => {
 
 describe("FenwickTree", function () {
   const A = [1, 5, -1, 0, 5];
-  let fenwickTree: FenwickTreeTS.FenwickTree;
+  let fenwickTree: fenwicktreejs.FenwickTree;
 
   this.beforeEach(async () => {
-    fenwickTree = new FenwickTreeTS.FenwickTree(A);
+    fenwickTree = new fenwicktreejs.FenwickTree(A);
   });
 
   it("Should have an accurate internal representation", async () => {
@@ -53,9 +53,15 @@ describe("FenwickTree", function () {
 
 describe("FenwickTreeContract", function () {
   const A = [1, 5, 2, 0, 5];
-  const fenwickTree = new FenwickTreeTS.FenwickTree(A);
+  const fenwickTree = new fenwicktreejs.FenwickTree(A);
 
   let fenwickTreeContract: FenwickTree;
+  this.beforeEach(async () => {
+    const FenwickTreeFactory = await ethers.getContractFactory("FenwickTree");
+    fenwickTreeContract = await FenwickTreeFactory.deploy(fenwickTree.fenwick);
+    await fenwickTreeContract.deployed();
+  });
+
   const getFenwickTreeContractPrefixSum = async () => {
     const prefixSum = [];
     for (const i of range(0, A.length)) {
@@ -63,12 +69,6 @@ describe("FenwickTreeContract", function () {
     }
     return prefixSum;
   };
-
-  this.beforeEach(async () => {
-    const FenwickTreeFactory = await ethers.getContractFactory("FenwickTree");
-    fenwickTreeContract = await FenwickTreeFactory.deploy(fenwickTree.fenwick);
-    await fenwickTreeContract.deployed();
-  });
 
   it("Should have an accurate internal representation", async () => {
     expect(fenwickTree.fenwick).to.eql([0, 1, 6, 2, 8, 5]);
