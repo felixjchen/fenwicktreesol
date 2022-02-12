@@ -20,37 +20,6 @@ const getPrefixSum = (A: number[]) => {
   return prefixSum;
 };
 
-describe("FenwickTree", function () {
-  const A = [1, 5, -1, 0, 5];
-  let fenwickTree: fenwicktreejs.FenwickTree;
-
-  this.beforeEach(async () => {
-    fenwickTree = new fenwicktreejs.FenwickTree(A);
-  });
-
-  it("Should have an accurate internal representation", async () => {
-    expect(fenwickTree.fenwick).to.eql([0, 1, 6, -1, 5, 5]);
-  });
-
-  it("Should match a naive prefix sum on A", async () => {
-    const fenwickPrefixSum = range(1, 6).map((i) => fenwickTree.query(i));
-    const prefixSum = getPrefixSum(A);
-    expect(fenwickPrefixSum).to.eql(prefixSum);
-  });
-
-  it("Should let me update any index", async () => {
-    // Update array and fenwick tree
-    const B = [...A];
-    B[1] -= 3;
-    fenwickTree.update(1 + 1, -3); // update is 1-indexed
-
-    // Check match
-    const fenwickPrefixSum = range(1, 6).map((i) => fenwickTree.query(i));
-    const prefixSum = getPrefixSum(B);
-    expect(fenwickPrefixSum).to.eql(prefixSum);
-  });
-});
-
 describe("FenwickTreeContract", function () {
   const A = [1, 5, 2, 0, 5];
   const fenwickTree = new fenwicktreejs.FenwickTree(A);
