@@ -2,7 +2,7 @@
 
 Fenwick Tree in Solidity with log(n) update and query to calculate prefix sums.
 
-Supported by TypeScript package [feenwicktreejs](https://www.npmjs.com/package/fenwicktreejs)
+Supported by TypeScript package [feenwicktreejs](https://www.npmjs.com/package/fenwicktreejs).
 
 ### Note
 
