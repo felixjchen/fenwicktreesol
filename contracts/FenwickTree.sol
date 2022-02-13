@@ -9,7 +9,7 @@ contract FenwickTree {
         fenwick = _fenwick;
     }
 
-    // Least signification bit
+    // Least significant bit
     function lsb(uint256 i) public pure returns (uint256) {
         // "i & (-i)"
         return
@@ -32,6 +32,16 @@ contract FenwickTree {
         uint256 fenwickLength = fenwick.length;
         while (i < fenwickLength) {
             fenwick[i] += diff;
+            i += lsb(i);
+        }
+    }
+
+    // 1-indexed
+    // Need this since diff cannot be negative
+    function updateSub(uint256 i, uint256 diff) public {
+        uint256 fenwickLength = fenwick.length;
+        while (i < fenwickLength) {
+            fenwick[i] -= diff;
             i += lsb(i);
         }
     }
