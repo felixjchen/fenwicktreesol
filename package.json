@@ -36,7 +36,7 @@
     "fenwicktreejs": "^1.0.0"
   },
   "description": "Fenwick Tree with log(n) update and query to implement a prefix sum. [Article](https://medium.com/carpanese/a-visual-introduction-to-fenwick-tree-89b82cac5b3c)",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "main": ".eslintrc.js",
   "directories": {
     "test": "test"

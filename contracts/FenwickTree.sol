@@ -36,8 +36,8 @@ contract FenwickTree {
         }
     }
 
-    // 1-indexed
     // Need this since diff cannot be negative
+    // 1-indexed
     function updateSub(uint256 i, uint256 diff) public {
         uint256 fenwickLength = fenwick.length;
         while (i < fenwickLength) {
