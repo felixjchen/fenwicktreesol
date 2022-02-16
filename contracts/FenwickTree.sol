@@ -3,10 +3,12 @@ pragma solidity ^0.8.0;
 
 contract FenwickTree {
     uint256[] public fenwick;
+    uint256 public n;
 
     // Takes a fenwick representation constructed off-chain
     constructor(uint256[] memory _fenwick) {
         fenwick = _fenwick;
+        n = _fenwick.length;
     }
 
     // Least significant bit
@@ -29,8 +31,7 @@ contract FenwickTree {
 
     // 1-indexed
     function update(uint256 i, uint256 diff) public {
-        uint256 fenwickLength = fenwick.length;
-        while (i < fenwickLength) {
+        while (i < n) {
             fenwick[i] += diff;
             i += lsb(i);
         }
@@ -39,8 +40,7 @@ contract FenwickTree {
     // Need this since diff cannot be negative
     // 1-indexed
     function updateSub(uint256 i, uint256 diff) public {
-        uint256 fenwickLength = fenwick.length;
-        while (i < fenwickLength) {
+        while (i < n) {
             fenwick[i] -= diff;
             i += lsb(i);
         }

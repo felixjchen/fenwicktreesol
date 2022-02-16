@@ -23,11 +23,12 @@ const getPrefixSum = (A: number[]) => {
 describe("FenwickTreeContract", function () {
   const A = [1, 5, 2, 0, 5];
   const fenwickTree = new fenwicktreejs.FenwickTree(A);
+  const fenwickTreeArray = fenwickTree.fenwick;
 
   let fenwickTreeContract: FenwickTree;
   this.beforeEach(async () => {
     const FenwickTreeFactory = await ethers.getContractFactory("FenwickTree");
-    fenwickTreeContract = await FenwickTreeFactory.deploy(fenwickTree.fenwick);
+    fenwickTreeContract = await FenwickTreeFactory.deploy(fenwickTreeArray);
     await fenwickTreeContract.deployed();
   });
 
