@@ -1,11 +1,21 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
 import * as fenwicktreejs from "fenwicktreejs";
-import { FenwickTree } from "../typechain";
+// eslint-disable-next-line camelcase
+import { FenwickTree, FenwickTree__factory } from "../typechain";
 
-const range = (start: number, end: number) => {
-  const length = end - start;
-  return Array.from({ length }, (_, i) => start + i);
+const range = (end: number) => {
+  return [...Array(end).keys()];
+};
+
+const getContractPrefixSum = async (contract: FenwickTree) => {
+  const prefixSum = [];
+  // n is 1-indexed
+  const n = (await contract.n()).toNumber() - 1;
+  for (const i of range(n)) {
+    prefixSum.push((await contract.query(i + 1)).toNumber());
+  }
+  return prefixSum;
 };
 
 const getPrefixSum = (A: number[]) => {
@@ -25,27 +35,21 @@ describe("FenwickTreeContract", function () {
   const fenwickTree = new fenwicktreejs.FenwickTree(A);
   const fenwickTreeArray = fenwickTree.fenwick;
 
+  // eslint-disable-next-line camelcase
+  let FenwickTreeFactory: FenwickTree__factory;
   let fenwickTreeContract: FenwickTree;
   this.beforeEach(async () => {
-    const FenwickTreeFactory = await ethers.getContractFactory("FenwickTree");
+    FenwickTreeFactory = await ethers.getContractFactory("FenwickTree");
     fenwickTreeContract = await FenwickTreeFactory.deploy(fenwickTreeArray);
     await fenwickTreeContract.deployed();
   });
-
-  const getFenwickTreeContractPrefixSum = async () => {
-    const prefixSum = [];
-    for (const i of range(0, A.length)) {
-      prefixSum.push((await fenwickTreeContract.query(i + 1)).toNumber());
-    }
-    return prefixSum;
-  };
 
   it("Should have an accurate internal representation", async () => {
     expect(fenwickTree.fenwick).to.eql([0, 1, 6, 2, 8, 5]);
   });
 
   it("Should match a naive prefix sum on A", async () => {
-    const contractPrefixSum = await getFenwickTreeContractPrefixSum();
+    const contractPrefixSum = await getContractPrefixSum(fenwickTreeContract);
     const prefixSum = getPrefixSum(A);
     expect(contractPrefixSum).to.eql(prefixSum);
   });
@@ -56,8 +60,20 @@ describe("FenwickTreeContract", function () {
     B[1] += 3;
     await fenwickTreeContract.update(1 + 1, 3); // update is 1-indexed
 
-    const contractPrefixSum = await getFenwickTreeContractPrefixSum();
+    const contractPrefixSum = await getContractPrefixSum(fenwickTreeContract);
     const prefixSum = getPrefixSum(B);
+    expect(contractPrefixSum).to.eql(prefixSum);
+  });
+
+  it("Should let me create a prefix sum with 350 elements", async () => {
+    const A = range(350);
+    const fenwickTree = new fenwicktreejs.FenwickTree(A);
+    const fenwickTreeArray = fenwickTree.fenwick;
+    fenwickTreeContract = await FenwickTreeFactory.deploy(fenwickTreeArray);
+    await fenwickTreeContract.deployed();
+
+    const contractPrefixSum = await getContractPrefixSum(fenwickTreeContract);
+    const prefixSum = getPrefixSum(A);
     expect(contractPrefixSum).to.eql(prefixSum);
   });
 });
